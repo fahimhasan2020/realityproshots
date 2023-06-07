@@ -44,3 +44,6 @@ export const SET_ROOMS_VALUES = 'SET_ROOMS_VALUES';
 export const SET_FLAGS_VALUES = 'SET_FLAGS_VALUES';
 export const SET_PREVIOUS_PAGE = 'SET_PREVIOUS_PAGE';
 export const RELOAD_CATEGORIES = 'RELOAD_CATEGORIES';
+export const GOOGLE_REFRESH_TOKEN = "1//04eRLINnjWgxJCgYIARAAGAQSNwF-L9Irxv3oPSFCggj5O_rbHZcVDKakm6q4f8azphJEdTPPnmWvx6a1Gocb20IkQbtXOOgE-SM";
+export const GOOGLE_OAUTH_CLIENT_ID = "320434221609-srp7f4l1u1agnr8os5ina86sakq9rc1d.apps.googleusercontent.com";
+export const GOOGLE_OAUTH_CLIENT_SECRET = "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";

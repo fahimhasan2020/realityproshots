@@ -11,7 +11,9 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
   ActivityIndicator,
+
 } from 'react-native';
+import RNFS from "react-native-fs"
 import styles from './styles';
 import MainFrame from '../../../../common/components/MainFrame';
 import { HeaderBarWithBackComponent } from '../../../../common/widgets/HeaderWidgets';
@@ -52,7 +54,34 @@ class SubmitProjectPage extends React.Component {
       message: '',
       showMessageContainer: false,
       uploadCompleted: false,
+      access_token: ''
     };
+  }
+
+  componentDidMount = () => {
+    this.getGoogleAccessToken();
+  }
+
+  getGoogleAccessToken = () => {
+    var myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/x-www-form-urlencoded");
+    var urlencoded = new URLSearchParams();
+    urlencoded.append("client_id", "320434221609-srp7f4l1u1agnr8os5ina86sakq9rc1d.apps.googleusercontent.com");
+    urlencoded.append("client_secret", "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");
+    urlencoded.append("refresh_token", "1//04eRLINnjWgxJCgYIARAAGAQSNwF-L9Irxv3oPSFCggj5O_rbHZcVDKakm6q4f8azphJEdTPPnmWvx6a1Gocb20IkQbtXOOgE-SM");
+    urlencoded.append("grant_type", "refresh_token");
+    var requestOptions = {
+      method: 'POST',
+      headers: myHeaders,
+      body: urlencoded.toString(),
+    };
+    fetch("https://oauth2.googleapis.com/token", requestOptions)
+      .then(response => response.json())
+      .then(result => {
+        console.log(result);
+        this.setState({ access_token: result.access_token });
+      })
+      .catch(error => console.log('error', error));
   }
 
   setModalVisible = (visible) => {
@@ -146,36 +175,40 @@ class SubmitProjectPage extends React.Component {
     }
     return response;
   };
+
   uploadFileGCloud = async (uploadParams) => {
-    const res = await fetch(uploadParams.uri);
-    const blob = await res.blob();
-    const headers = new Headers();
-    headers.append('Authorization', 'Bearer ya29.a0AWY7CkneCjGEKX-gQIvc-uZYDXMVdHExJSRkZtP8QdnjU0DMOAzC3VU4WZMGFtfCqu1UJMC_sh4U8Wq6TmOZSVtV5fJfO5cjSTJVJNKIWI9Ni0OiSqFQKuhgZpFWbHr6KatSKSNftuLNUoKnjSeAVFvQA8yOiD1cL23VaCgYKAQESARESFQG1tDrptb06of0oWLMfX5abFcTicQ0171');
-    const formData = new FormData();
-    formData.append('file', {
-      uri: uploadParams.uri,
-      type: uploadParams.type,
-      name: uploadParams.name,
-    });
+    try {
+      const myHeaders = new Headers();
+      myHeaders.append("Content-Type", "application/json; charset=UTF-8");
+      myHeaders.append("Authorization", "Bearer " + this.state.access_token);
 
-    const requestOptions = {
-      method: 'POST',
-      headers: headers,
-      body: formData,
-    };
+      const requestOptions = {
+        method: 'POST',
+        headers: myHeaders,
+        body: JSON.stringify({ name: uploadParams.name, mimeType: 'image/jpg', parents: ['1Qc3gjo_OI-YcpbcsRyF6v4IdCghOc7Yj'] }),
+        redirect: 'follow'
+      };
 
-    fetch(
-      'https://storage.googleapis.com/upload/storage/v1/b/testonebucket2023/o?uploadType=multipart&name=' + uploadParams.name,
-      requestOptions
-    )
-      .then((response) => response.text())
-      .then((result) => {
-        console.log(result);
-      })
-      .catch((error) => {
-        console.log('error', error);
-      });
+      const uploadResponse = await fetch("https://www.googleapis.com/upload/drive/v3/files?uploadType=resumable", requestOptions);
+      const uploadLocation = uploadResponse.headers.get('Location');
+
+      const myHeadersa = new Headers();
+      myHeadersa.append("Content-Type", "application/octet-stream");
+      const fileData = await RNFS.readFile(uploadParams.uri, 'base64');
+      const requestOptionsa = {
+        method: 'PUT',
+        headers: myHeadersa,
+        body: fileData,
+        redirect: 'follow'
+      };
+      const uploadFileResponse = await fetch(uploadLocation, requestOptionsa);
+      const uploadFileResult = await uploadFileResponse.text();
+      console.log('File upload result:', uploadFileResult);
+    } catch (error) {
+      console.log('Error uploading file:', error);
+    }
   };
+
 
   uploadImagesOnAWS = async () => {
     let userData = await getData('USER');
@@ -198,7 +231,6 @@ class SubmitProjectPage extends React.Component {
     });
     saveData('PROPERTIES', JSON.stringify(data));
 
-    // Uploaded images
     let uploadedImages = await getData(projectId);
     console.log('344-All', uploadedImages);
     const imagesList = this.props.navigation.getParam('ImagesList');

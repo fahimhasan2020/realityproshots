@@ -9,11 +9,11 @@ import {
 } from 'react-native';
 import styles from './styles';
 import images from '../../../../common/Images';
-import {NavigationEvents} from 'react-navigation';
-import {getData, saveData, removeData} from '../../../../common/Helper';
+import { NavigationEvents } from 'react-navigation';
+import { getData, saveData, removeData } from '../../../../common/Helper';
 import MainFrame from '../../../../common/components/MainFrame';
-import {HeaderBarComponent} from '../../../../common/widgets/HeaderWidgets';
-import {CameraRoll} from '@react-native-camera-roll/camera-roll';
+import { HeaderBarComponent } from '../../../../common/widgets/HeaderWidgets';
+import { CameraRoll } from '@react-native-camera-roll/camera-roll';
 
 class HomePage extends React.Component {
   constructor(props) {
@@ -33,12 +33,14 @@ class HomePage extends React.Component {
     this.getData();
   }
 
+
+
   setModalVisible = (visible) => {
-    this.setState({modalVisible: visible});
+    this.setState({ modalVisible: visible });
   };
 
   getData = async () => {
-    this.setState({refreshing: true, loading: true});
+    this.setState({ refreshing: true, loading: true });
     let data = await getData('PROPERTIES');
     let isNavigate = false;
     if (data) {
@@ -97,7 +99,7 @@ class HomePage extends React.Component {
     setTimeout(() => {
       this.getData();
     }, 2000);
-    this.setState({modalVisible: false});
+    this.setState({ modalVisible: false });
   };
 
   onPressTrashIcon = async (propertyAddress) => {
@@ -120,12 +122,12 @@ class HomePage extends React.Component {
     });
   };
 
-  renderItem = ({item}) => {
+  renderItem = ({ item }) => {
     console.log('Item', item);
     console.log('homePage', item.projectId);
     const firstImages = item.propertyPic.length ? item.propertyPic[0] : null;
     return (
-      <View style={{marginTop: 2}}>
+      <View style={{ marginTop: 2 }}>
         <TouchableOpacity
           style={styles.listItem}
           onPress={() =>
@@ -133,7 +135,7 @@ class HomePage extends React.Component {
           }>
           <View style={styles.subContainer}>
             <Image
-              source={{uri: firstImages ? firstImages[0] : null}}
+              source={{ uri: firstImages ? firstImages[0] : null }}
               style={styles.subImages}
             />
             <Text style={styles.label}>{item.title ? item.title : null}</Text>
@@ -186,22 +188,22 @@ class HomePage extends React.Component {
   };
 
   onPressOK = async () => {
-    this.setState({modalVisible: false});
+    this.setState({ modalVisible: false });
     await removeData('USER');
     this.props.navigation.navigate('LoginPage');
   };
 
   onPressCancel = () => {
-    this.setState({modalVisible: false});
+    this.setState({ modalVisible: false });
   };
 
   toggleDrawer = () => {
-    const {navigation} = this.props;
+    const { navigation } = this.props;
     navigation.toggleDrawer();
   };
 
   renderModal = () => {
-    const {modalVisible, isDelete, selectedProperty} = this.state;
+    const { modalVisible, isDelete, selectedProperty } = this.state;
     let title = 'Logout';
     let subTitle = 'Are you sure you want to Logout?';
     if (isDelete) {
@@ -246,7 +248,7 @@ class HomePage extends React.Component {
   };
 
   render() {
-    const {dataObj, isNavigate, refreshing, loading, modalVisible} = this.state;
+    const { dataObj, isNavigate, refreshing, loading, modalVisible } = this.state;
     return (
       <MainFrame>
         <HeaderBarComponent
@@ -264,10 +266,10 @@ class HomePage extends React.Component {
               sections={dataObj}
               refreshing={refreshing}
               onRefresh={this.getData}
-              contentContainerStyle={{paddingBottom: 100}}
+              contentContainerStyle={{ paddingBottom: 100 }}
               renderItem={this.renderItem}
               keyExtractor={(item, index) => item + index}
-              renderSectionHeader={({section}) => (
+              renderSectionHeader={({ section }) => (
                 <View style={styles.textContainer}>
                   <Text style={styles.reviewText}>{section.sectionId}</Text>
                 </View>
