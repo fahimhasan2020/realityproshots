@@ -41,6 +41,8 @@ class CameraPage extends PureComponent {
       exposureValue: -1,
       isSnapping: false,
       orientation: null,
+      showTimer: false,
+      timerCount: 3
     };
   }
 
@@ -155,12 +157,10 @@ class CameraPage extends PureComponent {
 
   checkDeviceLevels = (x, y, z) => {
     const { showRed, disableViberate, isSnapping } = this.state;
-    ///////////Red Box & Haptic Feedback Handling ///////////
     if (Platform.OS === 'ios') {
       if ((y > -0.02 && y < 0.02) || (x < 0.02 && x > -0.02)) {
         if (!showRed) {
           if (!isSnapping && !disableViberate) {
-            console.log('viberate now');
             Vibration.vibrate();
             this.setState({ disableViberate: true });
           }
@@ -199,9 +199,24 @@ class CameraPage extends PureComponent {
   };
 
   takePicture = async () => {
-    const { navigation } = this.props;
+
+    this.setState({showTimer:true});
+
+    const intervalId = setInterval(() => {
+      this.setState((prevState) => ({
+        timerCount: prevState.timerCount - 1,
+      }));
+
+      if (this.state.timerCount === 0) {
+        clearInterval(intervalId);
+        this.setState({showTimer:false});
+      }
+    }, 1000);
+
+    setTimeout(async()=>{const { navigation } = this.props;
+
     const projectId = navigation.getParam('projectId');
-    this.setState({ isSnapping: true });
+    this.setState({ isSnapping: true, });
     const data = [];
     let options = {};
     if (this.camera) {
@@ -246,7 +261,9 @@ class CameraPage extends PureComponent {
       onBack: () => {
         this.setState({ btnEnabled: true });
       },
-    });
+    });},1000);
+
+    
   };
 
   donePressed = () => {
@@ -363,6 +380,8 @@ class CameraPage extends PureComponent {
             buttonNegative: 'Cancel',
           }}
         />
+        {this.state.showTimer ? <Text style={{ position: 'absolute', top: '48%', left: '45%', fontSize: 100, color: 'white', fontWeight: 'bold' }}>{this.state.timerCount}</Text> : null}
+
         {!showGrid ? null : <GridViewComponent showRed={showRed} />}
         {this.renderOpaquBar(false)}
         {this.renderOpaquBar(true)}

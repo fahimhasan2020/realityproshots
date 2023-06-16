@@ -1,6 +1,7 @@
 import React from 'react';
 import {
   View,
+  Pressable,
   Text,
   Image,
   Platform,
@@ -13,10 +14,12 @@ import {
 import MainFrame from '../../../../common/components/MainFrame';
 import FindInput from '../../../../common/components/FindInput';
 import getAuthToken from '../../api/GetAuthTokenService';
-import {getUserInfo, getAuth0Token} from '../../api/GetUserInfoService';
+import { getUserInfo, getAuth0Token } from '../../api/GetUserInfoService';
 import styles from './styles';
-import {saveData, getData} from '../../../../common/Helper';
+import { saveData, getData } from '../../../../common/Helper';
 import images from '../../../../common/Images';
+import Entypo from "react-native-vector-icons/Entypo"
+import AntDesign from "react-native-vector-icons/AntDesign"
 
 class LoginPage extends React.Component {
   constructor(props) {
@@ -43,7 +46,7 @@ class LoginPage extends React.Component {
   };
 
   renderEmailContainer = () => {
-    const {emailError, email} = this.state;
+    const { emailError, email } = this.state;
     return (
       <View style={styles.emailContainer}>
         <Text style={styles.label}>Email</Text>
@@ -52,7 +55,7 @@ class LoginPage extends React.Component {
           icon={images.peopleIcon}
           clearTextOnFocus={false}
           error={emailError}
-          onChange={(emailValue) => this.setState({email: emailValue})}
+          onChange={(emailValue) => this.setState({ email: emailValue })}
           value={email}
           keyboardType="email-address"
           maxLength={100}
@@ -62,8 +65,8 @@ class LoginPage extends React.Component {
   };
 
   validateEmail = () => {
-    this.setState({loading: true});
-    const {email} = this.state;
+    this.setState({ loading: true });
+    const { email } = this.state;
     const regex =
       /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     if (email !== '') {
@@ -89,7 +92,7 @@ class LoginPage extends React.Component {
   };
 
   validatePassword = () => {
-    const {password} = this.state;
+    const { password } = this.state;
     if (password === '') {
       this.setState({
         passwordError: 'Please enter password',
@@ -104,7 +107,7 @@ class LoginPage extends React.Component {
   };
 
   renderPasswordContainer = () => {
-    const {passwordError, password, showPassword} = this.state;
+    const { passwordError, password, showPassword } = this.state;
     return (
       <View style={styles.emailContainer}>
         <Text style={styles.label}>Password</Text>
@@ -115,7 +118,7 @@ class LoginPage extends React.Component {
           onPressIcon={this.onPressEyeIcon}
           clearTextOnFocus={false}
           error={passwordError}
-          onChange={(passwordValue) => this.setState({password: passwordValue})}
+          onChange={(passwordValue) => this.setState({ password: passwordValue })}
           value={password}
           onBlur={(e) => this.validatePassword()}
         />
@@ -130,7 +133,7 @@ class LoginPage extends React.Component {
   };
 
   renderLoading = () => {
-    const {loading} = this.state;
+    const { loading } = this.state;
     if (!loading) {
       return null;
     }
@@ -145,7 +148,7 @@ class LoginPage extends React.Component {
   };
 
   renderButtonText = () => {
-    const {loading} = this.state;
+    const { loading } = this.state;
     if (loading) {
       return null;
     }
@@ -177,8 +180,8 @@ class LoginPage extends React.Component {
   };
   onPressLogin = async () => {
     try {
-      const {email, password} = this.state;
-      this.setState({loading: true});
+      const { email, password } = this.state;
+      this.setState({ loading: true });
       const credentials = await getAuth0Token(email, password);
       console.log('credentials: ', credentials);
       if (credentials && credentials.id_token) {
@@ -192,17 +195,17 @@ class LoginPage extends React.Component {
         console.log('token: ', token);
         token = token.replace(/['"]+/g, '');
         // if (token) {
-          const getUserInfoResponse = await getUserInfo(token);
-          console.log('getUserInfoResponse: ', getUserInfoResponse);
-          getUserInfoResponse.userEmail = email;
-          saveData('USER', JSON.stringify(getUserInfoResponse));
-          this.setState({loading: false});
-          const introFlag = await getData('introFlag');
-          if (introFlag === true) {
-            this.props.navigation.navigate('HomePage');
-          } else {
-            this.props.navigation.navigate('IntroPage');
-          }
+        const getUserInfoResponse = await getUserInfo(token);
+        console.log('getUserInfoResponse: ', getUserInfoResponse);
+        getUserInfoResponse.userEmail = email;
+        saveData('USER', JSON.stringify(getUserInfoResponse));
+        this.setState({ loading: false });
+        const introFlag = await getData('introFlag');
+        if (introFlag === true) {
+          this.props.navigation.navigate('HomePage');
+        } else {
+          this.props.navigation.navigate('IntroPage');
+        }
         // }
       } else {
         this.setState({
@@ -230,12 +233,23 @@ class LoginPage extends React.Component {
               {this.renderLoginButton()}
             </View>
           </TouchableWithoutFeedback>
+          <View style={[styles.socialContainer, { marginBottom: 30, marginTop: 30 }]}>
+            <View style={{ width: 100, height: 1, backgroundColor: '#ccc', marginTop: 10, marginRight: 5 }}></View>
+            <Text style={{ color: '#ccc' }}>OR</Text>
+            <View style={{ width: 100, height: 1, backgroundColor: '#ccc', marginTop: 10, marginLeft: 5 }}></View>
+          </View>
+          <View style={[styles.socialContainer]}>
+            <Pressable style={{ marginRight: 10, backgroundColor: 'white', elevation: 10, borderRadius: 30 }}><Entypo color="red" name="google--with-circle" size={55} /></Pressable>
+            <Pressable style={{ marginRight: 10, backgroundColor: 'white', elevation: 10, borderRadius: 30 }}><Entypo color="#3b5998" name="facebook-with-circle" size={55} /></Pressable>
+            <Pressable style={{ marginRight: 10, backgroundColor: 'white', elevation: 10, borderRadius: 30, width: 50, height: 50, alignItems: 'center', justifyContent: 'center' }}><AntDesign color="black" name="apple-o" size={35} /></Pressable>
+          </View>
           <View style={styles.infoContainer}>
             <Text style={styles.infoText}>
               To login, you MUST use whatever login you use for IntelliAgent, as
               this is a Fathom Realty only release!
             </Text>
           </View>
+
           {this.renderLoginBackgoundImage()}
         </KeyboardAvoidingView>
       </MainFrame>

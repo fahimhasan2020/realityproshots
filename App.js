@@ -1,13 +1,13 @@
-import React, {Component} from 'react';
-import {createSwitchNavigator, createAppContainer} from 'react-navigation';
-import {createStackNavigator} from 'react-navigation-stack';
-import {createDrawerNavigator} from 'react-navigation-drawer';
-import {Provider} from 'react-redux';
+import React, { Component } from 'react';
+import { createSwitchNavigator, createAppContainer } from 'react-navigation';
+import { createStackNavigator } from 'react-navigation-stack';
+import { createDrawerNavigator } from 'react-navigation-drawer';
+import { Provider } from 'react-redux';
 import PAGES from './src/pages';
-import {getWidthPercentage} from './src/common/Helper';
+import { getWidthPercentage } from './src/common/Helper';
 import AppDrawer from './src/common/navigation/AppDrawer';
 import configureStore from './src/AppStore';
-import {Text, TextInput} from 'react-native';
+import { Text, TextInput } from 'react-native';
 import Toast from 'react-native-toast-message';
 
 const store = configureStore();
@@ -41,8 +41,8 @@ const AuthNavigator = createStackNavigator(
       swipeEnabled: false,
     },
     navigationOptions: {
-      gestureEnabled: false,
-      drawerLockMode: 'locked-closed',
+      gestureEnabled: true,
+      drawerLockMode: 'unlocked',
     },
   },
 );
@@ -86,7 +86,7 @@ const DashboardNavigator = createStackNavigator(
     },
     navigationOptions: {
       gestureEnabled: false,
-      drawerLockMode: 'locked-closed',
+      drawerLockMode: 'unlocked',
     },
   },
 );
@@ -105,6 +105,8 @@ const AppDrawerNavigator = createDrawerNavigator(
       activeTintColor: 'white',
       inactiveTintColor: 'rgba(255, 255, 255, 0.5)',
     },
+    gestureEnabled: true,
+    drawerLockMode: 'unlocked',
   },
 );
 
@@ -116,12 +118,12 @@ const AppStack = createStackNavigator(
     initialRouteName: 'AppDrawerNavigator',
     headerMode: 'none',
     defaultNavigationOptions: {
-      gestureEnabled: false,
+      gestureEnabled: true,
       swipeEnabled: false,
     },
     navigationOptions: {
       headerVisible: false,
-      drawerLockMode: 'locked-closed',
+      drawerLockMode: 'unlocked',
     },
   },
 );

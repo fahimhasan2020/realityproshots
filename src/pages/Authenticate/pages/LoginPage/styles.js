@@ -1,8 +1,8 @@
 import { StyleSheet } from 'react-native';
 import {
-  font,
-  getWidthPercentage,
-  getHeightPercentage
+    font,
+    getWidthPercentage,
+    getHeightPercentage
 } from '../../../../common/Helper';
 import colors from '../../../../common/Colors';
 
@@ -24,11 +24,11 @@ const LoginPageStyle = StyleSheet.create({
         resizeMode: 'contain'
     },
     loginContainer: {
-       backgroundColor: colors.lightWhite,
-       height: getHeightPercentage(43),
-       marginLeft: 10,
-       marginRight: 10,
-       width: getWidthPercentage(95),
+        backgroundColor: colors.lightWhite,
+        height: getHeightPercentage(43),
+        marginLeft: 10,
+        marginRight: 10,
+        width: getWidthPercentage(95),
     },
     emailContainer: {
         paddingTop: 30,
@@ -57,7 +57,7 @@ const LoginPageStyle = StyleSheet.create({
         position: 'absolute',
         bottom: 10
     },
-    loginButton : {
+    loginButton: {
         backgroundColor: colors.primary,
         height: getHeightPercentage(6.5),
         width: getWidthPercentage(86),
@@ -83,6 +83,11 @@ const LoginPageStyle = StyleSheet.create({
         marginLeft: 10,
         marginRight: 10
     },
-  });
+    socialContainer: {
+        width: '100%',
+        flexDirection: 'row',
+        justifyContent: 'center'
+    }
+});
 
 export default LoginPageStyle;
